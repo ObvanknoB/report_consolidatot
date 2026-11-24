@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Report Consolidator Dashboard</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F4F5F6;color:#1B1F23;font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #1F5FBF;outline-offset:2px}
+.wrap{max-width:1360px;margin:0 auto;padding:28px 24px 48px;display:flex;flex-direction:column;gap:20px}
+h1{margin:0;font-size:28px;line-height:1.2;letter-spacing:-.01em}
+h2{margin:0;font-size:16px}
+p{margin:0}
+.muted{color:#4A535B}
+.small{font-size:12px}
+.card{background:#fff;border:1px solid #DDE1E5;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.between{justify-content:space-between}
+.btn{min-height:44px;padding:0 18px;border-radius:10px;border:1px solid #C5CBD1;background:#fff;font-weight:600}
+.btn:hover{background:#F4F5F6}
+.btn.primary{background:#1F5FBF;border-color:#1F5FBF;color:#fff}
+.btn.primary:hover{background:#194E9C}
+.btn.danger{border-color:#B3261E;color:#A02019}
+.btn.solid-danger{background:#B3261E;border-color:#B3261E;color:#fff}
+.btn.sm{padding:0 14px;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.kpi{background:#fff;border:1px solid #DDE1E5;border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.kpi .l{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#4A535B}
+.kpi .v{font-size:30px;font-weight:700;line-height:1.1}
+.main{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.left{flex:1 1 340px;max-width:440px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.right{flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.drop{border:2px dashed #B7BEC5;background:#FAFBFC;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.drop.over{border-color:#1F5FBF;background:#EAF1FD}
+.file{border:1px solid #DDE1E5;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.chip{flex:none;font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;white-space:nowrap}
+label.f{font-size:13px;font-weight:600}
+.field{display:flex;flex-direction:column;gap:6px}
+input[type=text],select,textarea{min-height:44px;padding:0 12px;border-radius:8px;border:1px solid #C5CBD1;background:#fff;width:100%}
+textarea{padding:10px 12px;resize:vertical}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{min-height:44px;padding:0 16px;border-radius:10px;border:1px solid #C5CBD1;background:#fff;font-weight:600}
+.tab[aria-pressed=true]{background:#1F5FBF;border-color:#1F5FBF;color:#fff}
+.pill{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid #C5CBD1;background:#fff;font-weight:600;font-size:13px}
+.pill[aria-pressed=true]{background:#1B1F23;border-color:#1B1F23;color:#fff}
+.bar{display:grid;grid-template-columns:140px minmax(0,1fr) 36px;gap:12px;align-items:center}
+.bar .t{height:12px;background:#EEF0F2;border-radius:6px;overflow:hidden}
+.bar .t i{display:block;height:12px;background:#1F5FBF;border-radius:6px}
+.scroll{overflow-x:auto}
+.grid{display:grid;gap:14px;padding:14px 12px;border-bottom:1px solid #E6E9EC;font-size:13px;line-height:1.5}
+.grid.head{background:#EEF0F2;border-radius:8px;border-bottom:0;padding:10px 12px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#3A424A}
+.g5{grid-template-columns:64px minmax(0,2.6fr) minmax(0,1.2fr) minmax(0,1.6fr) minmax(0,1.6fr)}
+.g4{grid-template-columns:64px minmax(0,2.4fr) minmax(0,1.2fr) minmax(0,2.2fr)}
+.pre{white-space:pre-line;word-break:break-word}
+.email{min-height:460px;padding:16px;border-radius:10px;border:1px solid #C5CBD1;background:#FBFBFC;font:14px/1.6 inherit;width:100%}
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid #E6E9EC;border-radius:10px}
+.check .chip{min-width:74px;text-align:center;font-size:11px;font-weight:700;padding:4px 8px}
+.notice{padding:10px 14px;border-radius:10px;background:#E8EEFB;color:#1B3F8F}
+.step{border:1px solid #DDE1E5;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.confirm{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 8px 6px 14px;border:1px solid #B3261E;border-radius:10px;background:#FFF4F2}
+@media (max-width:640px){.wrap{padding:16px 12px 32px}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+class Engine {
+  /* ---------- small utils ---------- */
+  xmlText(s) {
+    return String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+      .replace(/&#(\d+);/g, (m, n) => String.fromCharCode(+n)).replace(/&#x([0-9a-f]+);/gi, (m, n) => String.fromCharCode(parseInt(n, 16))).replace(/&amp;/g, '&');
+  }
+  colIdx(c) { let n = 0; for (let i = 0; i < c.length; i++) n = n * 26 + (c.charCodeAt(i) - 64); return n; }
+  fmtNum(v) { if (/^-?\d+\.\d{6,}$/.test(v)) { return String(parseFloat(parseFloat(v).toFixed(4))); } return v; }
+  fmtSize(n) { if (n < 1024) return n + ' B'; if (n < 1048576) return Math.round(n / 1024) + ' KB'; return (n / 1048576).toFixed(1) + ' MB'; }
+  fmtDate(d) { return d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear(); }
+  cap(t) { t = String(t); return t.charAt(0).toUpperCase() + t.slice(1); }
+  tok(s) {
+    const stop = new Set('the and for with from will has have had not than then into over under per via this that these those its are was were been'.split(' '));
+    return (String(s).toLowerCase().match(/[a-z0-9]+/g) || []).filter(w => w.length > 2 && !stop.has(w));
+  }
+  jac(a, b) { const A = new Set(a), B = new Set(b); if (!A.size || !B.size) return 0; let i = 0; A.forEach(x => { if (B.has(x)) i++; }); return i / (A.size + B.size - i); }
+  contain(a, b) { const A = new Set(a), B = new Set(b); if (!A.size) return 0; let i = 0; A.forEach(x => { if (B.has(x)) i++; }); return i / A.size; }
+  shorten(t, n) {
+    t = String(t).replace(/\s+/g, ' ').trim();
+    if (t.length <= n) return t;
+    const first = t.match(/^[^.!?]{20,}?[.!?](?=\s|$)/);
+    if (first && first[0].length <= n) return first[0];
+    const cut = t.slice(0, n); const sp = cut.lastIndexOf(' ');
+    return (sp > 40 ? cut.slice(0, sp) : cut) + ' …';
+  }
+  parseDate(t) {
+    const M = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']; let m;
+    if ((m = t.match(/\b(20\d\d)-(\d{1,2})-(\d{1,2})\b/))) return new Date(+m[1], +m[2] - 1, +m[3]);
+    if ((m = t.match(/\b(\d{1,2})(?:st|nd|rd|th)?[\s-]+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?,?(?:[\s-]+(20\d\d))?/i))) return new Date(m[3] ? +m[3] : new Date().getFullYear(), M.indexOf(m[2].toLowerCase()), +m[1]);
+    if ((m = t.match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(20\d\d))?\b/i))) return new Date(m[3] ? +m[3] : new Date().getFullYear(), M.indexOf(m[1].toLowerCase()), +m[2]);
+    if ((m = t.match(/\b(\d{1,2})\/(\d{1,2})\/(20\d\d)\b/))) return new Date(+m[3], +m[2] - 1, +m[1]);
+    return null;
+  }
+
+  /* ---------- zip / office readers ---------- */
+  async inflate(bytes, fmt) {
+    const ds = new DecompressionStream(fmt);
+    const w = ds.writable.getWriter();
+    w.write(bytes).catch(() => {}); w.close().catch(() => {});
+    return new Uint8Array(await new Response(ds.readable).arrayBuffer());
+  }
+  async unzip(buf) {
+    const dv = new DataView(buf), u8 = new Uint8Array(buf); let eocd = -1;
+    for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 65557); i--) { if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; } }
+    if (eocd < 0) throw new Error('Not a valid Office file (zip directory not found).');
+    const n = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true);
+    const entries = {}; const dec = new TextDecoder('utf-8');
+    for (let k = 0; k < n; k++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) break;
+      const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nlen = dv.getUint16(p + 28, true), elen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true), lho = dv.getUint32(p + 42, true);
+      entries[dec.decode(u8.subarray(p + 46, p + 46 + nlen))] = { method, csize, lho };
+      p += 46 + nlen + elen + clen;
+    }
+    const self = this;
+    const read = async (name) => {
+      const e = entries[name]; if (!e) return null;
+      const start = e.lho + 30 + dv.getUint16(e.lho + 26, true) + dv.getUint16(e.lho + 28, true);
+      const data = u8.subarray(start, start + e.csize);
+      if (e.method === 0) return dec.decode(data);
+      if (e.method === 8) return dec.decode(await self.inflate(data, 'deflate-raw'));
+      return null;
+    };
+    return { names: Object.keys(entries), read };
+  }
+  wText(p) {
+    return [...p.matchAll(/<w:t(?:\s[^>]*)?>([\s\S]*?)<\/w:t>|<w:tab\/>|<w:br\/>/g)].map(m => m[1] !== undefined ? m[1] : ' ').join('');
+  }
+  async parseDocx(buf) {
+    const z = await this.unzip(buf); const xml = await z.read('word/document.xml');
+    if (!xml) throw new Error('word/document.xml not found.');
+    const units = []; let heading = ''; let n = 0;
+    const toks = xml.match(/<w:tr[ >][\s\S]*?<\/w:tr>|<w:p[ >][\s\S]*?<\/w:p>/g) || [];
+    for (const t of toks) {
+      n++;
+      if (t.indexOf('<w:tr') === 0) {
+        const cells = t.split('</w:tc>').map(c => this.xmlText(this.wText(c)).trim()).filter(Boolean);
+        if (cells.length) units.push({ loc: (heading ? heading + ', ' : '') + 'table row', text: cells.join(' | '), ctx: heading, row: true });
+        continue;
+      }
+      const text = this.xmlText(this.wText(t)).trim(); if (!text) continue;
+      if (/<w:pStyle w:val="(?:Heading\d|Title)/.test(t)) { heading = text; continue; }
+      units.push({ loc: heading ? heading + ' (para ' + n + ')' : 'Para ' + n, text, ctx: heading });
+    }
+    return units;
+  }
+  async parseXlsx(buf) {
+    const z = await this.unzip(buf); const ss = [];
+    const sst = await z.read('xl/sharedStrings.xml');
+    if (sst) for (const m of sst.matchAll(/<si>([\s\S]*?)<\/si>/g)) ss.push(this.xmlText([...m[1].matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(x => x[1]).join('')));
+    const wb = (await z.read('xl/workbook.xml')) || '';
+    const names = [...wb.matchAll(/<sheet\s[^>]*?name="([^"]*)"/g)].map(m => this.xmlText(m[1]));
+    const num = n => parseInt((n.match(/(\d+)\.xml$/) || [0, 0])[1], 10);
+    const sheets = z.names.filter(n => /^xl\/worksheets\/sheet\d+\.xml$/.test(n)).sort((a, b) => num(a) - num(b));
+    const units = []; let si = 0;
+    for (const path of sheets) {
+      const name = names[si++] || ('Sheet' + si); const xml = await z.read(path); if (!xml) continue;
+      let hdr = null; let rc = 0;
+      for (const rm of xml.matchAll(/<row\b[^>]*>([\s\S]*?)<\/row>/g)) {
+        if (++rc > 3000) break;
+        const cells = [];
+        for (const cm of rm[1].matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+          const attrs = cm[1], body = cm[2] || '';
+          const ref = attrs.match(/\br="([A-Z]+)(\d+)"/) || []; const t = (attrs.match(/\bt="(\w+)"/) || [])[1];
+          let v = '';
+          if (t === 'inlineStr') v = this.xmlText([...body.matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(x => x[1]).join(''));
+          else { const vm = body.match(/<v>([\s\S]*?)<\/v>/); if (vm) v = t === 's' ? (ss[+vm[1]] || '') : this.fmtNum(this.xmlText(vm[1])); }
+          v = String(v).trim();
+          if (v !== '') cells.push({ col: this.colIdx(ref[1] || 'A'), cn: ref[1] || '', row: ref[2] || '', v });
+        }
+        if (!cells.length) continue;
+        if (!hdr && cells.length >= 2) { hdr = {}; cells.forEach(c => { hdr[c.col] = c.v; }); continue; }
+        const numLike = /^[$\u00a3\u20ac]?\s?-?[\d,]+(?:\.\d+)?\s?(%|[kKmMbB]n?|million|billion)?$/;
+        const text = (cells.length === 2 && !numLike.test(cells[0].v) && numLike.test(cells[1].v)) ? cells[0].v + ': ' + cells[1].v : cells.map(c => (hdr && hdr[c.col] && hdr[c.col] !== c.v) ? hdr[c.col] + ': ' + c.v : c.v).join('; ');
+        const a = cells[0], b = cells[cells.length - 1];
+        units.push({ loc: name + '!' + a.cn + a.row + ':' + b.cn + b.row, text, ctx: name, row: cells.length >= 2 });
+      }
+    }
+    return units;
+  }
+  async parsePptx(buf) {
+    const z = await this.unzip(buf); const units = [];
+    const num = n => parseInt((n.match(/(\d+)\.xml$/) || [0, 0])[1], 10);
+    const grab = async (path, label) => {
+      const xml = await z.read(path); if (!xml) return;
+      let title = '';
+      for (const pm of xml.matchAll(/<a:p[ >][\s\S]*?<\/a:p>/g)) {
+        const text = this.xmlText([...pm[0].matchAll(/<a:t(?:\s[^>]*)?>([\s\S]*?)<\/a:t>/g)].map(x => x[1]).join('')).trim();
+        if (!text || /^\d+$/.test(text)) continue;
+        if (!title) title = text;
+        units.push({ loc: label, text, ctx: title });
+      }
+    };
+    const slides = z.names.filter(n => /^ppt\/slides\/slide\d+\.xml$/.test(n)).sort((a, b) => num(a) - num(b));
+    for (const p of slides) await grab(p, 'Slide ' + num(p));
+    const notes = z.names.filter(n => /^ppt\/notesSlides\/notesSlide\d+\.xml$/.test(n)).sort((a, b) => num(a) - num(b));
+    for (const p of notes) await grab(p, 'Slide ' + num(p) + ' notes');
+    return units;
+  }
+
+  /* ---------- text-like readers ---------- */
+  parseText(text) {
+    const units = []; let heading = ''; const lines = text.split(/\r?\n/);
+    lines.forEach((raw, i) => {
+      let t = raw.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '').trim(); if (!t) return;
+      const h = raw.match(/^\s*#{1,6}\s+(.*)$/);
+      if (h) { heading = h[1].trim(); return; }
+      if (t.length <= 60 && (/:$/.test(t) || (t === t.toUpperCase() && /[A-Z]/.test(t)))) { heading = t.replace(/:$/, ''); return; }
+      units.push({ loc: (heading ? heading + ', ' : '') + 'line ' + (i + 1), text: t, ctx: heading });
+    });
+    return units;
+  }
+  csvRows(text, d) {
+    const rows = []; let row = [], cur = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) { if (ch === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === d) { row.push(cur); cur = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cur); cur = ''; if (row.some(x => x.trim() !== '')) rows.push(row); row = []; }
+      else cur += ch;
+    }
+    row.push(cur); if (row.some(x => x.trim() !== '')) rows.push(row);
+    return rows;
+  }
+  parseCsv(text, d) {
+    const rows = this.csvRows(text, d); if (!rows.length) return [];
+    const hdr = rows[0].map(x => x.trim()); const units = [];
+    rows.slice(1, 3001).forEach((r, i) => {
+      const t = r.map((v, j) => { v = v.trim(); if (!v) return ''; return hdr[j] && hdr[j] !== v ? hdr[j] + ': ' + v : v; }).filter(Boolean).join('; ');
+      if (t) units.push({ loc: 'Row ' + (i + 2), text: t, ctx: '', row: true });
+    });
+    return units;
+  }
+  parseJson(text) {
+    const out = [];
+    const walk = (v, path) => {
+      if (out.length > 2000) return;
+      if (v && typeof v === 'object') { Object.keys(v).forEach(k => walk(v[k], path ? path + '.' + k : k)); }
+      else if (v !== null && v !== '') out.push({ loc: path || 'root', text: (path ? path.split('.').pop() + ': ' : '') + String(v), ctx: path.split('.')[0] || '' });
+    };
+    walk(JSON.parse(text), ''); return out;
+  }
+  parseHtml(text) {
+    const t = text.replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<\/(p|div|li|tr|h\d|table|section)>/gi, '\n').replace(/<br\s*\/?>/gi, '\n').replace(/<h(\d)[^>]*>/gi, '\n# ').replace(/<[^>]+>/g, ' ');
+    return this.parseText(this.xmlText(t.replace(/&nbsp;/g, ' ')));
+  }
+  a85(bytes) {
+    const out = []; let grp = [], i = 0;
+    const s = new TextDecoder('latin1').decode(bytes);
+    for (; i < s.length; i++) {
+      const c = s[i];
+      if (c === '~') break;
+      if (/\s/.test(c)) continue;
+      if (c === 'z' && !grp.length) { out.push(0, 0, 0, 0); continue; }
+      const v = c.charCodeAt(0) - 33; if (v < 0 || v > 84) continue;
+      grp.push(v);
+      if (grp.length === 5) { let n = 0; for (const g of grp) n = n * 85 + g; out.push((n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255); grp = []; }
+    }
+    if (grp.length > 1) { const k = grp.length; while (grp.length < 5) grp.push(84); let n = 0; for (const g of grp) n = n * 85 + g; const b = [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255]; for (let j = 0; j < k - 1; j++) out.push(b[j]); }
+    return new Uint8Array(out);
+  }
+  async parsePdf(buf) {
+    const u8 = new Uint8Array(buf); const s = new TextDecoder('latin1').decode(u8);
+    const units = []; let i = 0, page = 0, streams = 0, printable = 0, total = 0;
+    const unesc = (str) => str.replace(/\\([nrtbf()\\]|[0-7]{1,3})/g, (m, c) => { if (c === 'n') return '\n'; if (c === 'r') return ''; if (c === 't') return ' '; if (c === 'b' || c === 'f') return ''; if (c.length === 1 && '()\\'.indexOf(c) >= 0) return c; return String.fromCharCode(parseInt(c, 8)); });
+    while (streams < 600) {
+      const k = s.indexOf('stream', i); if (k < 0) break;
+      i = k + 6;
+      if (s.slice(Math.max(0, k - 3), k) === 'end') continue;
+      let st = i; if (s[st] === '\r') st++; if (s[st] === '\n') st++;
+      const en = s.indexOf('endstream', st); if (en < 0) break;
+      i = en + 9; streams++;
+      const dict = s.slice(Math.max(0, s.lastIndexOf('obj', k)), k);
+      let content;
+      try {
+        let raw = u8.subarray(st, en);
+        if (/ASCII85Decode/.test(dict)) raw = this.a85(raw);
+        content = /FlateDecode/.test(dict) ? new TextDecoder('latin1').decode(await this.inflate(raw, 'deflate')) : new TextDecoder('latin1').decode(raw);
+      } catch (e) { continue; }
+      if (content.indexOf('BT') < 0) continue;
+      page++;
+      let line = '';
+      const rx = /\[((?:\\.|[^\]\\])*)\]\s*TJ|\(((?:\\.|[^\\)])*)\)\s*(?:Tj|'|")|(T\*|Td|TD|Tm|ET)/g; let m;
+      const flush = () => { const t = line.replace(/\s+/g, ' ').trim(); if (t.length > 1) units.push({ loc: 'Page ~' + page, text: t, ctx: '' }); line = ''; };
+      while ((m = rx.exec(content))) {
+        if (m[1] !== undefined) {
+          const parts = [...m[1].matchAll(/\(((?:\\.|[^\\)])*)\)|(-?\d+(?:\.\d+)?)/g)];
+          parts.forEach(p => { if (p[1] !== undefined) line += unesc(p[1]); else if (parseFloat(p[2]) < -200) line += ' '; });
+        } else if (m[2] !== undefined) line += unesc(m[2]);
+        else flush();
+      }
+      flush();
+    }
+    units.forEach(u => { total += u.text.length; for (let j = 0; j < u.text.length; j++) { const c = u.text.charCodeAt(j); if ((c >= 32 && c < 127)) printable++; } });
+    // merge short fragments into sentence-like lines
+    const merged = []; let buf2 = null;
+    units.forEach(u => {
+      if (buf2 && buf2.loc === u.loc && /[a-z,]$/.test(buf2.text) && /^[a-z]/.test(u.text) && buf2.text.length < 160) buf2.text += ' ' + u.text;
+      else { if (buf2) merged.push(buf2); buf2 = { loc: u.loc, text: u.text, ctx: '' }; }
+    });
+    if (buf2) merged.push(buf2);
+    merged.quality = total ? printable / total : 0;
+    return merged;
+  }
+
+  /* ---------- file ingestion ---------- */
+  guessRole(name) { return /previous|prior|baseline|last[-_ ]?(month|week|period|quarter|briefing)|action[-_ ]?log|approved[-_ ]?briefing/i.test(name) ? 'baseline' : 'current'; }
+  async readFile(file) {
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    const rec = { id: 'f' + Date.now() + Math.random().toString(36).slice(2, 7), name: file.name, ext, size: file.size, status: 'ok', note: '', infos: [], role: this.guessRole(file.name), units: [], marked: '', injection: '' };
+    try {
+      let units = [];
+      if (['txt', 'md', 'markdown', 'log', 'eml'].indexOf(ext) >= 0) units = this.parseText(await file.text());
+      else if (ext === 'csv') units = this.parseCsv(await file.text(), ',');
+      else if (ext === 'tsv') units = this.parseCsv(await file.text(), '\t');
+      else if (ext === 'json') units = this.parseJson(await file.text());
+      else if (ext === 'html' || ext === 'htm') units = this.parseHtml(await file.text());
+      else if (ext === 'docx') units = await this.parseDocx(await file.arrayBuffer());
+      else if (ext === 'pptx') units = await this.parsePptx(await file.arrayBuffer());
+      else if (ext === 'xlsx' || ext === 'xlsm') { units = await this.parseXlsx(await file.arrayBuffer()); rec.infos.push('Excel number formats are not applied here: percentages and dates may appear as decimals or serial numbers. Check them in the source.'); }
+      else if (ext === 'pdf') {
+        units = await this.parsePdf(await file.arrayBuffer());
+        rec.infos.push('PDF text is read on a best-effort basis; page numbers are approximate. Tables and charts are not interpreted.');
+        if (units.length && units.quality < 0.85) { rec.status = 'warn'; rec.note = 'Text looks partly unreadable (custom fonts or scanned pages). Verify against the original.'; }
+      } else if (['doc', 'ppt', 'xls', 'rtf', 'odt', 'pages', 'key', 'numbers'].indexOf(ext) >= 0) {
+        rec.status = 'error'; rec.note = 'Legacy or unsupported format. Save as .docx, .pptx or .xlsx, or ask Claude in the chat to read it.';
+      } else if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'tif', 'tiff'].indexOf(ext) >= 0) {
+        rec.status = 'error'; rec.note = 'Images cannot be read here. Attach it in the chat so Claude can read it directly.';
+      } else { rec.status = 'error'; rec.note = 'Unsupported file type.'; }
+      rec.units = units;
+      if (rec.status !== 'error' && !units.length) { rec.status = 'error'; rec.note = 'No readable text was found (empty, scanned or image-only file).'; }
+      const head = units.slice(0, 30).concat(units.slice(-5));
+      const mk = /^\W*(strictly\s+)?(confidential|internal(?:\s+use)?(?:\s+only)?|restricted|not for (?:external )?(?:distribution|circulation))\b|classification\s*[:\-]\s*(internal|confidential|restricted)|\[(internal|confidential)\]/i;
+      for (const u of head) { const m = u.text.match(mk); if (m) { rec.marked = m[0].replace(/^\W+/, '').trim(); break; } }
+      if (!rec.marked && /confidential|internal[-_ ]only/i.test(file.name)) rec.marked = 'marked in file name';
+      const inj = /(ignore (?:all |any )?(?:previous|prior|above)|disregard (?:the )?(?:above|previous|instructions)|you (?:must|should) now|system prompt|do not tell|send (?:this|the) (?:email|report|file) to|forward this to)/i;
+      for (const u of units) { if (inj.test(u.text)) { rec.injection = u.loc; break; } }
+    } catch (e) { rec.status = 'error'; rec.note = 'Could not read this file: ' + (e && e.message ? e.message : 'unknown error') + '.'; rec.units = []; }
+    return rec;
+  }
+  /* ---------- analysis ---------- */
+  P() {
+    return {
+      decision: /\b(decision (?:required|needed|pending|requested)|(?:requires?|needs?|pending|seeking|requested|requesting|awaiting) (?:\w+ ){0,2}(?:approval|decision|sign[- ]?off|funding)|escalat\w+|go\/no[- ]go|steering committee)/i,
+      issue: /\b(issues?|blockers?|blocked|blocking|delay(?:ed|s)?|overruns?|over budget|slipp(?:ed|age|ing)|behind schedule|breach(?:ed)?|fail(?:ed|ure|ing)|outage|incident|shortfall|missed|off[- ]track|red)\b/i,
+      risk: /\b(risks?|at risk|threat|exposure|may (?:delay|impact|affect)|could (?:delay|impact|affect)|dependenc(?:y|ies)|concerns?|vulnerabilit\w+|amber)\b/i,
+      action: /\b(actions?|next steps?|to[- ]do|follow[- ]up|will (?:deliver|complete|provide|submit|review|finali[sz]e)|due|owner|assigned|responsible|deadline)\b/i,
+      achievement: /\b(complet(?:ed|ion)|achiev(?:ed|ement)|delivered|launched|released|go[- ]live|milestone|on track|ahead of|signed|resolved|closed|green|met|exceed(?:ed|s))\b/i,
+      figure: /(budget|forecast|actual|cost|revenue|spend|variance|utili[sz]ation|headcount|progress|complete|\d+\s?%|[$£€]\s?\d)/i
+    };
+  }
+  classify(t, ctx) {
+    const P = this.P(); const c = (ctx || '').toLowerCase();
+    const cm = [[/decision|approval/, 'decision'], [/issue|blocker|problem/, 'issue'], [/risk|threat/, 'risk'], [/action|next step|follow/, 'action'], [/achiev|highlight|accomplish|progress|milestone|completed|delivered|wins?\b/, 'achievement']];
+    let ctxCat = ''; for (const p of cm) { if (p[0].test(c)) { ctxCat = p[1]; break; } }
+    if (P.decision.test(t)) return 'decision';
+    if (ctxCat && ctxCat !== 'achievement') return ctxCat;
+    for (const k of ['decision', 'issue', 'risk', 'action', 'achievement']) if (P[k].test(t)) return k;
+    if (ctxCat) return ctxCat;
+    if (/\d/.test(t) && P.figure.test(t)) return 'figure';
+    return '';
+  }
+  cleanRow(text) {
+    const meta = /^(owner|due|due date|date|id|ref|#|rag|status|priority|likelihood|impact|raised|target)\s*:/i;
+    const keep = text.split('; ').filter(s => !meta.test(s)).map(s => s.replace(/^[A-Za-z ]{2,24}:\s*/, ''));
+    return (keep.length ? keep.join(' — ') : text);
+  }
+  detectPeriod(files) {
+    const full = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const rx = /\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+(20\d\d)\b|\b(Q[1-4])\s*(20\d\d)\b|\b(20\d\d)\s*(Q[1-4])\b/gi;
+    const counts = {};
+    files.forEach(f => {
+      const txt = f.name + '\n' + f.units.slice(0, 8).map(u => u.text).join('\n');
+      let m; rx.lastIndex = 0;
+      while ((m = rx.exec(txt))) {
+        let key = '';
+        if (m[1] && m[2]) { const idx = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(m[1].slice(0, 3).toLowerCase()); key = full[idx] + ' ' + m[2]; }
+        else if (m[3] && m[4]) key = m[3].toUpperCase() + ' ' + m[4];
+        else if (m[5] && m[6]) key = m[6].toUpperCase() + ' ' + m[5];
+        if (key) counts[key] = (counts[key] || 0) + 1;
+      }
+    });
+    const ks = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    return ks[0] || '';
+  }
+
+  analyze(s) {
+    const files = s.files; const today = new Date(); today.setHours(0, 0, 0, 0);
+    const curF = files.filter(f => f.role === 'current' && f.units.length);
+    const baseF = files.filter(f => f.role === 'baseline' && f.units.length);
+    const detected = this.detectPeriod(curF);
+    const period = (s.period || '').trim() || detected;
+    const sens = /\b(salary|salaries|performance review|disciplinary|litigation|legal dispute|settlement|negotiat\w+|contingency|termination|redundanc\w+)\b/i;
+    const qual = /\b(provisional|subject to|unaudited|estimated?|forecast|draft|excluding|preliminary|unverified)\b/i;
+    const prio = { decision: 5, issue: 4, risk: 3.5, action: 3, achievement: 2, figure: 1.5 };
+    let items = [];
+    const build = (f, u, cat) => {
+      const text = u.row ? this.cleanRow(u.text) : u.text;
+      const ownerM = u.text.match(/\b(?:[Oo]wner|[Oo]wned by|[Aa]ssigned to|[Rr]esponsible|[Ll]ead|PIC|DRI)\s*[:\-–]?\s*([A-Z][A-Za-z.'-]+(?: [A-Z][A-Za-z.'-]+){0,2})/);
+      let due = null; if (cat !== 'achievement' && cat !== 'figure' && /\b(due|by|deadline|target|before|until|eta|no later than|go-live|deliver\w*)\b/i.test(u.text)) due = this.parseDate(u.text);
+      const rag = (u.text.match(/\b(?:Status|RAG)\s*:\s*(Red|Amber|Green)/i) || [])[1];
+      let st = [];
+      if (cat === 'decision') st.push('Decision needed');
+      else if (/\b(propos\w+|recommend\w+|suggest\w+|plan to|intend\w*)\b/i.test(u.text)) st.push('Proposed (not yet committed)');
+      else if (/\b(agreed|approved|committed|confirmed|will (?:deliver|complete|provide))\b/i.test(u.text)) st.push('Committed');
+      else if (cat === 'achievement') st.push('Reported');
+      else if (cat === 'issue') st.push('Open issue');
+      else if (cat === 'risk') st.push('Open risk');
+      else if (cat === 'action') st.push('Open action');
+      else st.push('Reported figure');
+      if (rag) st.push('RAG: ' + rag);
+      const notes = [];
+      const q = u.text.match(qual); if (q) notes.push('Qualified ("' + q[0].toLowerCase() + '"): keep the qualification if quoted.');
+      const owner = ownerM ? ownerM[1].trim().replace(/\.$/, '') : '';
+      if (['decision', 'issue', 'action', 'risk'].indexOf(cat) >= 0 && !owner) notes.push('Owner: Unassigned.');
+      if (cat === 'action' && !due) notes.push('Date to confirm.');
+      let passed = false; if (due && due < today) { passed = true; notes.push('Due ' + this.fmtDate(due) + ' may already have passed: verify status.'); }
+      if (due && !passed) notes.push('Due ' + this.fmtDate(due) + '.');
+      const marked = !!f.marked; const sensitive = sens.test(u.text);
+      const withheld = s.audience === 'external' && (marked || sensitive);
+      if (withheld) notes.push('Withheld from the external email (' + (marked ? 'source marked ' + f.marked : 'sensitive topic') + ').');
+      let score = prio[cat] || 1; if (/\b(critical|high|urgent|material|red)\b/i.test(u.text)) score += 1.5; if (due) score += 1; if (owner) score += 0.3;
+      const stripped = text.replace(/[,;]?\s*\b(?:[Oo]wner|[Rr]esponsible|[Aa]ssigned to)\s*[:\-]\s*[A-Z][A-Za-z.'-]+(?: [A-Z][A-Za-z.'-]+){0,2}/g, '').replace(/[,;]?\s*\b(?:due(?: on| by)?|by)\s+(?:\d{4}-\d{2}-\d{2}|\d{1,2}(?:st|nd|rd|th)?\s+[A-Z][a-z]+\.?(?:\s+\d{4})?|[A-Z][a-z]+\.?\s+\d{1,2}(?:,?\s+\d{4})?|\d{1,2}\/\d{1,2}\/\d{4})/g, '').replace(/\s+([.,;])/g, '$1').replace(/\.{2,}/g, '.').replace(/^(?:issue|risk|next steps?|actions?|decision required)\s*:\s*/i, '').replace(/[,;]+\s*\.$/, '.').trim();
+      return { cat, text, clean: stripped || text, full: u.text, tokens: this.tok(u.text), sources: [{ file: f.name, loc: u.loc }], status: st.join(' · '), owner, due, passed, notes, withheld, marked, score, ctx: u.ctx };
+    };
+    curF.forEach(f => {
+      f.units.forEach(u => {
+        const t = u.text; if (t.length < 20 || t.length > 700 || t.split(/\s+/).length < 4) return;
+        const cat = this.classify(t, u.ctx); if (!cat) return;
+        const it = build(f, u, cat);
+        const dup = items.find(x => x.cat === it.cat && this.jac(x.tokens, it.tokens) >= 0.8);
+        if (dup) { dup.sources.push(it.sources[0]); if (!dup.notes.some(n => /Also reported/.test(n))) dup.notes.push('Also reported in another location.'); }
+        else items.push(it);
+      });
+    });
+    const figs = items.filter(i => i.cat === 'figure').sort((a, b) => b.score - a.score).slice(0, 15);
+    const rest = items.filter(i => i.cat !== 'figure');
+    items = rest.concat(figs).sort((a, b) => b.score - a.score).slice(0, 70);
+    items.forEach((it, i) => { it.id = 'E' + (i + 1); });
+
+    // conflicts
+    const noise = new Set(['page','slide','row','line','week','month','day','date','version','rev','sheet','figure','table','section','item','phase','step','number','para','total']);
+    const mrx = /([A-Za-z][A-Za-z0-9 &\/()'-]{2,48}?)\s*(?::|=|–|—|\bis\b|\bwas\b|\bat\b)\s*(?:approx\.?\s*|about\s*|~)?([$£€]?\s?\d[\d,]*(?:\.\d+)?)\s?(%|[kKmMbB]n?\b|million|billion|days?|weeks?|months?|hrs?|hours)?/g;
+    const groups = {};
+    curF.forEach(f => f.units.forEach(u => {
+      let m; mrx.lastIndex = 0;
+      while ((m = mrx.exec(u.text))) {
+        const lt = this.tok(m[1]).slice(-2); if (!lt.length || lt.every(w => noise.has(w))) continue;
+        const key = lt.slice().sort().join(' '); if (key.length < 4) continue;
+        let n = parseFloat(m[2].replace(/[$£€,\s]/g, '')); if (isNaN(n)) continue;
+        const unit = (m[3] || '').toLowerCase(); let cls = 'plain';
+        if (unit === '%') cls = 'pct'; else if (/^(k|m|b|mn|bn|million|billion)$/.test(unit) || /[$£€]/.test(m[2])) cls = 'money'; else if (unit) cls = 'time';
+        if (/^(k)$/.test(unit)) n *= 1e3; else if (/^(m|mn|million)$/.test(unit)) n *= 1e6; else if (/^(b|bn|billion)$/.test(unit)) n *= 1e9;
+        if (cls === 'plain' && ((n >= 1900 && n <= 2100) || n < 2)) continue;
+        const raw = (m[2] + (m[3] ? (/^(%|[kKmMbB]n?)$/.test(m[3]) ? '' : ' ') + m[3] : '')).replace(/\s+/g, ' ').trim();
+        (groups[key] = groups[key] || []).push({ file: f.name, loc: u.loc, raw, n, cls, label: m[1].trim() });
+      }
+    }));
+    const conflicts = [];
+    Object.keys(groups).forEach(k => {
+      const byFile = {}; groups[k].forEach(g => { if (!byFile[g.file]) byFile[g.file] = g; });
+      const arr = Object.keys(byFile).map(x => byFile[x]); if (arr.length < 2) return;
+      const cls = arr[0].cls; const same = arr.filter(a => a.cls === cls); if (same.length < 2) return;
+      const mn = Math.min.apply(null, same.map(a => a.n)), mx = Math.max.apply(null, same.map(a => a.n));
+      if (mx === 0 || (mx - mn) / Math.abs(mx) <= 0.005) return;
+      conflicts.push({ label: same[0].label, values: same });
+    });
+    conflicts.slice(0, 12).forEach((c, i) => { c.id = 'C' + (i + 1); });
+    const confl = conflicts.slice(0, 12);
+
+    // baseline
+    let baseItems = [];
+    baseF.forEach(f => f.units.forEach(u => {
+      const t = u.text; if (t.length < 20 || t.split(/\s+/).length < 4) return;
+      const cat = this.classify(t, u.ctx); if (['decision', 'issue', 'risk', 'action'].indexOf(cat) < 0) return;
+      const tk = this.tok(t); if (baseItems.some(b => this.jac(b.tokens, tk) >= 0.8)) return;
+      let due = null; if (/\b(due|by|deadline|target|before|until|eta)\b/i.test(t)) due = this.parseDate(t);
+      baseItems.push({ cat, text: u.row ? this.cleanRow(t) : t, full: t, tokens: tk, file: f.name, loc: u.loc, due, marked: !!f.marked });
+    }));
+    baseItems = baseItems.slice(0, 60);
+    const curUnits = []; curF.forEach(f => f.units.forEach(u => curUnits.push({ f, u, tk: this.tok(u.text) })));
+    const closedRx = /\b(closed|resolved|completed|done|delivered|mitigated|cleared|fixed)\b/i;
+    baseItems.forEach((b, i) => {
+      b.id = 'B' + (i + 1); let best = null, bs = 0;
+      curUnits.forEach(c => { const sc = Math.max(this.contain(b.tokens, c.tk) * (c.tk.length >= 3 ? 1 : 0.5), 0); const inter = b.tokens.filter(w => c.tk.indexOf(w) >= 0).length; if (inter >= 3 && sc > bs) { bs = sc; best = c; } });
+      if (best && bs >= 0.6) {
+        b.match = best;
+        if (closedRx.test(best.u.text)) { b.cls = 'Closed'; b.evidence = 'Explicit closure language in current report:\n' + best.f.name + ' — ' + best.u.loc; }
+        else {
+          const nums = s => (s.match(/\d[\d,.]*/g) || []).join('|');
+          const changed = nums(b.full) !== nums(best.u.text);
+          b.cls = changed ? 'Updated' : 'Still open';
+          b.evidence = this.shorten(best.u.text, 160) + '\n' + best.f.name + ' — ' + best.u.loc;
+        }
+      } else {
+        b.cls = 'No update received';
+        b.evidence = 'No current evidence found. Carried forward as open.' + (b.due && b.due < today ? '\nDue ' + this.fmtDate(b.due) + ' appears to have passed.' : '');
+      }
+    });
+    if (baseItems.length) items.forEach(it => { if (['decision', 'issue', 'risk', 'action'].indexOf(it.cat) >= 0) { const hit = baseItems.some(b => this.contain(b.tokens, it.tokens) >= 0.6 && b.tokens.filter(w => it.tokens.indexOf(w) >= 0).length >= 3); if (!hit) it.status = 'New · ' + it.status; } });
+
+    // checks
+    const checks = [];
+    const add = (sev, text) => checks.push({ sev, text });
+    if (!curF.length && files.length) add('high', 'No readable current reports are loaded. Check file status messages and roles.');
+    files.forEach(f => { if (f.status === 'error') add('high', f.name + ': ' + f.note); else if (f.status === 'warn') add('med', f.name + ': ' + f.note); });
+    if (s.expected && s.expected.trim()) {
+      s.expected.split(/\n+/).map(x => x.trim()).filter(Boolean).forEach(e => {
+        const k = e.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+        if (!files.some(f => f.role === 'current' && f.units.length && f.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').indexOf(k) >= 0)) add('high', 'Expected report not found among uploads: "' + e + '". The briefing may have a coverage gap.');
+      });
+    }
+    if (confl.length) add('high', confl.length + ' possible conflicting figure' + (confl.length === 1 ? '' : 's') + ' (' + confl.map(c => c.id).join(', ') + '). Same label, different values across reports. Neither is presented as confirmed; confirm scope, period and definition with the report owners.');
+    const un = items.filter(i => ['decision', 'issue', 'action', 'risk'].indexOf(i.cat) >= 0 && !i.owner && !i.withheld);
+    if (un.length) add('med', un.length + ' decision, risk, issue or action item' + (un.length === 1 ? ' has' : 's have') + ' no named owner (' + un.slice(0, 8).map(i => i.id).join(', ') + (un.length > 8 ? ', …' : '') + '). Shown as Unassigned.');
+    const nd = items.filter(i => i.cat === 'action' && !i.due && !i.withheld);
+    if (nd.length) add('med', nd.length + ' action' + (nd.length === 1 ? ' has' : 's have') + ' no due date (' + nd.slice(0, 8).map(i => i.id).join(', ') + (nd.length > 8 ? ', …' : '') + '). Shown as Date to confirm.');
+    const ps = items.filter(i => i.passed);
+    if (ps.length) add('high', 'Deadlines that may have passed by the time of sending: ' + ps.slice(0, 8).map(i => i.id).join(', ') + '. Confirm current status before the email goes out.');
+    const mk = files.filter(f => f.marked);
+    if (mk.length) add(s.audience === 'external' ? 'high' : 'info', mk.map(f => f.name).join(', ') + ' ' + (mk.length === 1 ? 'is' : 'are') + ' marked internal or confidential' + (s.audience === 'external' ? '. Items from ' + (mk.length === 1 ? 'it are' : 'them are') + ' withheld from the external draft. Confirm disclosure scope before adding anything back.' : '. Do not forward this draft externally without confirming disclosure scope.'));
+    const wh = items.filter(i => i.withheld && !i.marked);
+    if (wh.length) add('high', wh.length + ' item' + (wh.length === 1 ? '' : 's') + ' touching sensitive topics (HR, legal, commercial) withheld from the external draft (' + wh.slice(0, 6).map(i => i.id).join(', ') + ').');
+    files.filter(f => f.injection).forEach(f => add('med', f.name + ' contains instruction-like text (' + f.injection + '). It was treated as source material and ignored.'));
+    if (!baseItems.length) add('med', baseF.length ? 'The previous briefing was read but no open items were recognised in it. Statements about change since last period are omitted.' : 'No previous approved briefing was supplied. The email describes the current position only and makes no claims about change since last period.');
+    const nu = baseItems.filter(b => b.cls === 'No update received');
+    if (nu.length) add('high', nu.length + ' previously open item' + (nu.length === 1 ? ' has' : 's have') + ' no update in the current reports (' + nu.slice(0, 8).map(b => b.id).join(', ') + '). Carried forward as open; ask the owners for status.');
+    if (!(s.period || '').trim() && detected) add('med', 'Reporting period "' + detected + '" was inferred from the file names or titles. Confirm it.');
+    if (!period && curF.length) add('med', 'Reporting period could not be determined. A placeholder is used in the email.');
+    if (!(s.recipients || '').trim()) add('med', 'Recipients are not confirmed. The To line is a placeholder.');
+    if (!(s.sender || '').trim()) add('info', 'Sender name is a placeholder.');
+    if (files.some(f => f.ext === 'pdf' && f.units.length)) add('info', 'PDF page numbers are approximate. Open the original to confirm each locator.');
+    if (files.some(f => (f.ext === 'xlsx' || f.ext === 'xlsm') && f.units.length)) add('info', 'Excel values are read as stored, without number formatting. Check percentages and dates against the workbook.');
+    if (curF.length) add('info', 'This draft comes from keyword-based extraction. Confirm every figure, date, owner and status against its source before sending. Derived or inferred statements are not used.');
+    const order = { high: 0, med: 1, info: 2 }; checks.sort((a, b) => order[a.sev] - order[b.sev]);
+
+    return { items, conflicts: confl, baseItems, checks, period, detected, curF, baseF, today };
+  }
+
+  /* ---------- email ---------- */
+  buildEmail(a, s) {
+    const aud = s.audience; const per = a.period || '[reporting period]';
+    const greet = { leadership: 'Dear colleagues,', operational: 'Hi team,', external: 'Dear partners,' }[aud] || 'Hello,';
+    const ok = it => !it.withheld;
+    const ach = a.items.filter(i => ok(i) && (i.cat === 'achievement' || i.cat === 'figure'));
+    const ris = a.items.filter(i => ok(i) && (i.cat === 'issue' || i.cat === 'risk')).sort((x, y) => (y.cat === 'issue') - (x.cat === 'issue') || y.score - x.score);
+    const act = a.items.filter(i => ok(i) && (i.cat === 'decision' || i.cat === 'action')).sort((x, y) => (y.cat === 'decision') - (x.cat === 'decision') || y.score - x.score);
+    const nDec = a.items.filter(i => i.cat === 'decision' && ok(i)).length;
+    const confl = aud === 'external' ? [] : a.conflicts;
+    const noUp = a.baseItems.filter(b => b.cls === 'No update received' && !(aud === 'external' && b.marked));
+    const nReports = a.curF.length;
+    const withOwner = i => { const o = i.owner || 'Unassigned'; const d = i.due ? this.fmtDate(i.due) : 'Date to confirm'; return ' (Owner: ' + o + '; Due: ' + d + ')'; };
+    const caps = [[3, 3, 2, 5, 2], [2, 2, 2, 4, 1], [2, 2, 1, 3, 1], [1, 1, 1, 2, 0]];
+    let body = '', words = 0;
+    for (let c = 0; c < caps.length; c++) {
+      const cp = caps[c]; const L = [];
+      L.push(greet, '');
+      let open = 'Below is the consolidated update for ' + per + ', drawing on ' + nReports + ' report' + (nReports === 1 ? '' : 's') + '.';
+      const bits = [];
+      if (nDec) bits.push(nDec + ' decision' + (nDec === 1 ? '' : 's') + ' needed');
+      if (ris.length) bits.push(ris.length + ' risk or issue item' + (ris.length === 1 ? '' : 's'));
+      if (confl.length) bits.push(confl.length + ' figure' + (confl.length === 1 ? '' : 's') + ' to be confirmed');
+      if (bits.length) open += ' It flags ' + bits.join(', ') + '.';
+      L.push(open, '');
+      const sec = {};
+      if (ach.length && cp[0]) sec.upd = ['Key updates'].concat(ach.slice(0, cp[0]).map(i => '- ' + this.shorten(i.text, 170) + (i.status.indexOf('Qualified') >= 0 ? '' : '')));
+      if (ris.length && cp[1]) sec.risk = ['Risks and issues'].concat(ris.slice(0, cp[1]).map(i => '- ' + this.cap(this.shorten(i.text.replace(/^(?:issue|risk)\s*:\s*/i, ''), 170))));
+      if (confl.length && cp[2]) sec.conf = ['Figures to confirm'].concat(confl.slice(0, cp[2]).map(k => '- ' + k.label + ': ' + k.values.slice(0, 2).map(v => v.file.replace(/\.[a-z0-9]+$/i, '') + ' states ' + v.raw).join('; ') + '. Not yet confirmed.'));
+      if (act.length && cp[3]) sec.act = [(nDec ? 'Decisions and actions needed' : 'Actions')].concat(act.slice(0, cp[3]).map(i => '- ' + (i.cat === 'decision' ? 'Decision: ' : '') + this.cap(this.shorten(i.clean || i.text, 150).replace(/\.$/, '')) + withOwner(i)));
+      if (noUp.length && cp[4]) sec.nou = ['No current update received'].concat(noUp.slice(0, cp[4]).map(b => '- ' + this.shorten(b.text, 140)));
+      const orderBy = aud === 'operational' ? ['act', 'risk', 'upd', 'conf', 'nou'] : ['upd', 'risk', 'act', 'conf', 'nou'];
+      orderBy.forEach(k => { if (sec[k]) { L.push(sec[k][0] + ':'); sec[k].slice(1).forEach(x => L.push(x)); L.push(''); } });
+      if (!ach.length && !ris.length && !act.length) { L.push('No material items could be extracted from the reports provided. Please review the source files directly.', ''); }
+      L.push('Kind regards,', (s.sender || '').trim() || '[Sender name]');
+      body = L.join('\n'); words = body.split(/\s+/).filter(Boolean).length;
+      if (words <= 260) break;
+    }
+    const subj = per + ' consolidated report briefing' + (nDec ? ' — ' + nDec + ' decision' + (nDec === 1 ? '' : 's') + ' needed' : (confl.length ? ' — figures to be confirmed' : ''));
+    const head = 'To: ' + ((s.recipients || '').trim() || 'To be confirmed') + '\nSubject: ' + subj + '\n\n';
+    return { text: head + body, words };
+  }
+
+}
+
+
+(function () {
+  var E = new Engine();
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var app = document.getElementById('app');
+  var dl = null;
+  function defaults() { return { files: [], tab: 'email', period: '', audience: 'leadership', recipients: '', sender: '', expected: '', confirmReset: false, notice: '', busy: false, filter: 'all', copied: false }; }
+  var S = defaults();
+  var memo = null;
+  var lastModel = null;
+
+  var catMeta = {
+    decision: ['Decision', '#E3EBFB', '#1B3F8F'], issue: ['Issue', '#FBE5E2', '#8A1C15'], risk: ['Risk', '#FDEBD8', '#7A3C06'],
+    action: ['Action', '#DDF0EC', '#0B5B52'], achievement: ['Update', '#E4F1DC', '#2A5214'], figure: ['Figure', '#E9ECEF', '#2F373F'],
+    conflict: ['Conflict', '#F1E3F6', '#5E2475']
+  };
+  var catKeys = ['decision', 'issue', 'risk', 'action', 'achievement', 'figure'];
+  var sevMeta = { high: ['Resolve', '#FBE5E2', '#8A1C15'], med: ['Confirm', '#FDEBD8', '#7A3C06'], info: ['Note', '#E9ECEF', '#2F373F'] };
+  var baseMeta = { 'Closed': ['#E4F1DC', '#2A5214'], 'Updated': ['#E3EBFB', '#1B3F8F'], 'Still open': ['#FDEBD8', '#7A3C06'], 'No update received': ['#FBE5E2', '#8A1C15'] };
+
+  function setState(p) { Object.assign(S, p); render(); }
+
+  function analysis() {
+    var key = JSON.stringify([S.files.map(function (f) { return [f.id, f.role, f.units.length]; }), S.audience, S.period, S.expected, S.recipients, S.sender]);
+    if (memo && memo.key === key) return memo.val;
+    var a = E.analyze(S); var em = E.buildEmail(a, S);
+    memo = { key: key, val: { a: a, em: em } };
+    return memo.val;
+  }
+
+  function buildModel() {
+    var r = analysis(), a = r.a, em = r.em;
+    var rowsAll = a.items.map(function (it) {
+      var m = catMeta[it.cat];
+      return { id: it.id, cat: it.cat, withheld: it.withheld, catLabel: m[0], catBg: m[1], catFg: m[2],
+        text: it.withheld ? 'Withheld from the email for this audience. See the source locator for the detail.' : it.text,
+        status: it.status + (it.owner ? '\nOwner: ' + it.owner : ''),
+        sources: it.sources.slice(0, 4).map(function (x) { return x.file + ' — ' + x.loc; }).join('\n') + (it.sources.length > 4 ? '\n+' + (it.sources.length - 4) + ' more' : ''),
+        note: it.notes.join('\n') || 'Matches source wording.' };
+    });
+    a.conflicts.forEach(function (c) {
+      var m = catMeta.conflict;
+      rowsAll.push({ id: c.id, cat: 'conflict', withheld: false, catLabel: m[0], catBg: m[1], catFg: m[2],
+        text: 'Possible conflict on "' + c.label + '": ' + c.values.map(function (v) { return v.raw + ' (' + v.file + ')'; }).join(' vs '),
+        status: 'Confirmation required', sources: c.values.map(function (v) { return v.file + ' — ' + v.loc; }).join('\n'),
+        note: 'Neither value is presented as confirmed. Check that period, scope and definition match before treating this as a true conflict.' });
+    });
+    return { a: a, em: em, rowsAll: rowsAll };
+  }
+
+  function markdown(m) {
+    var c = function (t) { return String(t).replace(/\|/g, '/').replace(/\n/g, '; '); };
+    var o = '# Consolidated briefing draft\n\n## 1. Email draft\n\n```\n' + m.em.text + '\n```\n\n## 2. Review table\n\n| ID | Finding or action | Status or change | Source and locator | Verification note |\n|---|---|---|---|---|\n';
+    m.rowsAll.forEach(function (r) { o += '| ' + r.id + ' | ' + c(r.text) + ' | ' + c(r.status) + ' | ' + c(r.sources) + ' | ' + c(r.note) + ' |\n'; });
+    if (m.a.baseItems.length) { o += '\n## Baseline tracker\n\n| ID | Previously open item | Classification | Current evidence |\n|---|---|---|---|\n'; m.a.baseItems.forEach(function (b) { o += '| ' + b.id + ' | ' + c(b.text) + ' | ' + b.cls + ' | ' + c(b.evidence) + ' |\n'; }); }
+    o += '\n## 3. Before sending\n\n'; (m.a.checks.length ? m.a.checks : [{ text: 'No outstanding checks arose.' }]).forEach(function (k) { o += '- ' + k.text + '\n'; });
+    return o;
+  }
+
+  /* ---------- views ---------- */
+  function chip(label, bg, fg) { return '<span class="chip" style="background:' + bg + ';color:' + fg + '">' + esc(label) + '</span>'; }
+
+  function viewHeader() {
+    var reset = S.confirmReset
+      ? '<div class="confirm" role="alertdialog" aria-label="Confirm reset"><span style="font-size:13px;font-weight:600;color:#8A1C15">Clear all files, settings and results?</span><button class="btn solid-danger sm" data-act="doReset">Yes, reset</button><button class="btn sm" data-act="cancelReset">Cancel</button></div>'
+      : '<button class="btn danger" data-act="askReset">Reset dashboard</button>';
+    return '<div class="row between" style="align-items:flex-start;gap:16px">' +
+      '<div style="display:flex;flex-direction:column;gap:6px;max-width:760px"><h1>Report Consolidator</h1>' +
+      '<p class="muted" style="font-size:15px">Upload this period\'s reports and the previous briefing. Get one evidence-backed briefing email, a traceable review table and a pre-send checklist.</p>' +
+      '<p class="muted small" style="font-size:13px">Draft only: nothing is sent. Files are read inside this page and are not uploaded anywhere.</p></div>' +
+      '<div class="row">' + (dl ? '<button class="btn" data-act="download">Download briefing (.md)</button>' : '') + '<button class="btn" data-act="copyMd">' + (S.copiedMd ? 'Briefing copied' : 'Copy full briefing') + '</button>' + reset + '</div></div>';
+  }
+
+  function viewKpis(m) {
+    var a = m.a, readOk = S.files.filter(function (f) { return f.status !== 'error'; }).length;
+    var noUpd = a.baseItems.filter(function (b) { return b.cls === 'No update received'; }).length;
+    var high = a.checks.filter(function (c) { return c.sev === 'high'; }).length;
+    var k = [['Files read', readOk, 'of ' + S.files.length + ' uploaded'], ['Evidence items', a.items.length, 'each with a source locator'], ['Possible conflicts', a.conflicts.length, 'confirmation required'],
+      ['No update received', noUpd, a.baseItems.length ? 'of ' + a.baseItems.length + ' baseline items' : 'no baseline loaded'], ['To resolve before sending', high, a.checks.length + ' checks in total']];
+    return '<div class="kpis">' + k.map(function (x) { return '<div class="kpi"><span class="l">' + esc(x[0]) + '</span><span class="v">' + x[1] + '</span><span class="small muted">' + esc(x[2]) + '</span></div>'; }).join('') + '</div>';
+  }
+
+  function viewFiles() {
+    if (!S.files.length) return '';
+    return '<div style="display:flex;flex-direction:column;gap:10px">' + S.files.map(function (f) {
+      var st = f.status === 'ok' ? ['Read', '#DDF0EC', '#0B5B52'] : f.status === 'warn' ? ['Check', '#FDEBD8', '#7A3C06'] : ['Not read', '#FBE5E2', '#8A1C15'];
+      var notes = []; if (f.note) notes.push(f.note); if (f.marked) notes.push('Marked internal or confidential.'); if (f.injection) notes.push('Contains instruction-like text; ignored.'); f.infos.forEach(function (x) { notes.push(x); });
+      return '<div class="file"><div class="row between" style="flex-wrap:nowrap;align-items:flex-start"><div style="min-width:0"><div style="font-weight:600;word-break:break-word">' + esc(f.name) + '</div><div class="small muted">' + esc(f.ext.toUpperCase() + ' · ' + E.fmtSize(f.size) + ' · ' + f.units.length + ' text blocks') + '</div></div>' + chip(st[0], st[1], st[2]) + '</div>' +
+        (notes.length ? '<div class="small muted pre">' + esc(notes.join('\n')) + '</div>' : '') +
+        '<div class="row between"><select aria-label="Role of ' + esc(f.name) + '" data-change="role" data-id="' + f.id + '" style="flex:1 1 180px;width:auto"><option value="current"' + (f.role === 'current' ? ' selected' : '') + '>Current report</option><option value="baseline"' + (f.role === 'baseline' ? ' selected' : '') + '>Previous briefing / action log</option></select>' +
+        '<button class="btn sm" data-act="remove" data-id="' + f.id + '" aria-label="Remove ' + esc(f.name) + '">Remove</button></div></div>';
+    }).join('') + '</div>';
+  }
+
+  function viewLeft(m) {
+    var a = m.a; var ph = a.detected ? a.detected : 'e.g. October 2026';
+    var hint = (S.period || '').trim() ? 'Used in the email subject and opening.' : (a.detected ? 'Detected from your files. Type here to override.' : 'Not detected. Enter it to avoid a placeholder.');
+    return '<div class="left"><div class="card"><h2>1. Upload reports</h2>' +
+      '<div class="drop" id="drop"><span style="font-weight:600">Drop files here, or choose several at once</span>' +
+      '<input id="report-files" type="file" multiple accept=".pdf,.docx,.pptx,.xlsx,.xlsm,.csv,.tsv,.txt,.md,.json,.html,.htm,.eml" aria-label="Choose report files" data-change="files" style="width:100%;max-width:100%;min-height:0;border:0;padding:0;background:transparent">' +
+      '<span class="small muted">PDF, Word (.docx), PowerPoint (.pptx), Excel (.xlsx), CSV, TXT, Markdown, JSON, HTML, EML. Set one file\'s role to Previous briefing to track what changed.</span></div>' +
+      (S.busy ? '<span role="status" style="color:#1B3F8F;font-weight:600">Reading files…</span>' : '') + viewFiles() + '</div>' +
+      '<div class="card"><h2>2. Briefing settings</h2>' +
+      '<div class="field"><label class="f" for="period">Reporting period</label><input id="period" type="text" value="' + esc(S.period) + '" placeholder="' + esc(ph) + '" data-input="period"><span class="small muted">' + esc(hint) + '</span></div>' +
+      '<div class="field"><label class="f" for="audience">Audience</label><select id="audience" data-change="audience"><option value="leadership"' + (S.audience === 'leadership' ? ' selected' : '') + '>Leadership (position, impact, decisions)</option><option value="operational"' + (S.audience === 'operational' ? ' selected' : '') + '>Operational team (actions, owners, dates)</option><option value="external"' + (S.audience === 'external' ? ' selected' : '') + '>External (internal-marked items withheld)</option></select></div>' +
+      '<div class="field"><label class="f" for="recipients">Recipients (To)</label><input id="recipients" type="text" value="' + esc(S.recipients) + '" placeholder="Leave blank if not yet confirmed" data-input="recipients"></div>' +
+      '<div class="field"><label class="f" for="sender">Sender name</label><input id="sender" type="text" value="' + esc(S.sender) + '" placeholder="Leave blank to keep a placeholder" data-input="sender"></div>' +
+      '<div class="field"><label class="f" for="expected">Expected reports (optional, one per line)</label><textarea id="expected" style="min-height:84px" placeholder="Finance report&#10;Risk register&#10;Programme status" data-input="expected">' + esc(S.expected) + '</textarea><span class="small muted">Used to flag reports that were not uploaded.</span></div>' +
+      '</div></div>';
+  }
+
+  function viewEmpty() {
+    return '<div class="card" style="padding:28px"><h2 style="font-size:20px">Start by uploading your reports</h2>' +
+      '<p class="muted" style="font-size:15px;max-width:720px;line-height:1.6">The dashboard reads each file, builds an evidence register with a source locator for every item, compares figures across reports, and drafts a short email. Everything it cannot confirm is flagged for you.</p>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">' +
+      ['Add this period\'s reports in any supported format, together or one at a time.', 'Optionally add last period\'s approved briefing and set its role to Previous briefing.', 'Review the email, the review table and the pre-send checklist, then copy the draft.'].map(function (t, i) { return '<div class="step"><span style="font-size:13px;font-weight:700;color:#1F5FBF">Step ' + (i + 1) + '</span><span>' + esc(t) + '</span></div>'; }).join('') + '</div>' +
+      '<p class="muted small" style="line-height:1.6;max-width:720px;font-size:13px">This page uses rule-based extraction, so treat its output as a first pass. Scanned or image-only PDFs, images, and legacy .doc, .ppt and .xls files cannot be read here; save them as .docx, .pptx or .xlsx, or ask Claude in the chat to read them.</p></div>';
+  }
+
+  function viewMix(m) {
+    var counts = {}; catKeys.forEach(function (k) { counts[k] = m.a.items.filter(function (i) { return i.cat === k; }).length; });
+    var mx = Math.max.apply(null, [1].concat(catKeys.map(function (k) { return counts[k]; })));
+    return '<div class="card"><h2>Evidence mix</h2><div style="display:flex;flex-direction:column;gap:8px">' + catKeys.map(function (k) {
+      return '<div class="bar"><span>' + esc(catMeta[k][0]) + 's</span><div class="t"><i style="width:' + Math.round(counts[k] / mx * 100) + '%"></i></div><span style="font-weight:600;text-align:right">' + counts[k] + '</span></div>';
+    }).join('') + '</div></div>';
+  }
+
+  function viewTabs(m) {
+    var defs = [['email', 'Email draft'], ['table', 'Review table (' + m.rowsAll.length + ')'], ['checks', 'Before sending (' + m.a.checks.length + ')'], ['baseline', 'Baseline tracker (' + m.a.baseItems.length + ')']];
+    return '<div class="tabs" role="group" aria-label="Views">' + defs.map(function (d) { return '<button class="tab" aria-pressed="' + (S.tab === d[0]) + '" data-act="tab" data-v="' + d[0] + '">' + esc(d[1]) + '</button>'; }).join('') + '</div>';
+  }
+
+  function viewEmail(m) {
+    return '<div class="card"><div class="row between"><h2>Email draft</h2><div class="row"><span class="muted" style="font-size:13px">' + m.em.words + ' words in body (target 150–250)</span><button class="btn primary" data-act="copyEmail">' + (S.copied ? 'Copied' : 'Copy email') + '</button></div></div>' +
+      '<textarea id="emailbox" class="email" readonly aria-label="Email draft">' + esc(m.em.text) + '</textarea>' +
+      '<span class="small muted">Review the Before sending tab first. Nothing here has been sent or saved to a mailbox.</span></div>';
+  }
+
+  function viewTable(m) {
+    var all = m.rowsAll;
+    var cnt = function (k) { return k === 'all' ? all.length : k === 'withheld' ? all.filter(function (r) { return r.withheld; }).length : all.filter(function (r) { return r.cat === k; }).length; };
+    var defs = [['all', 'All'], ['decision', 'Decisions'], ['issue', 'Issues'], ['risk', 'Risks'], ['action', 'Actions'], ['achievement', 'Updates'], ['figure', 'Figures'], ['conflict', 'Conflicts'], ['withheld', 'Withheld']].filter(function (d) { return d[0] === 'all' || cnt(d[0]) > 0 || S.filter === d[0]; });
+    var rows = all.filter(function (r) { return S.filter === 'all' || (S.filter === 'withheld' ? r.withheld : r.cat === S.filter); });
+    return '<div class="card"><h2>Review table</h2><div class="row" style="gap:8px">' + defs.map(function (d) { return '<button class="pill" aria-pressed="' + (S.filter === d[0]) + '" data-act="filter" data-v="' + d[0] + '">' + esc(d[1]) + ' (' + cnt(d[0]) + ')</button>'; }).join('') + '</div>' +
+      '<div class="scroll"><div role="table" aria-label="Evidence register" style="min-width:900px"><div role="row" class="grid head g5"><span role="columnheader">ID</span><span role="columnheader">Finding or action</span><span role="columnheader">Status or change</span><span role="columnheader">Source and locator</span><span role="columnheader">Verification note</span></div>' +
+      rows.map(function (r) { return '<div role="row" class="grid g5"><div role="cell" style="font-weight:700">' + esc(r.id) + '</div><div role="cell" style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">' + chip(r.catLabel, r.catBg, r.catFg) + '<span style="word-break:break-word">' + esc(r.text) + '</span></div><div role="cell" class="pre">' + esc(r.status) + '</div><div role="cell" class="pre muted">' + esc(r.sources) + '</div><div role="cell" class="pre muted">' + esc(r.note) + '</div></div>'; }).join('') + '</div></div>' +
+      (rows.length ? '' : '<p class="muted">No items in this view. Try another filter, or check that files are set as current reports.</p>') + '</div>';
+  }
+
+  function viewChecks(m) {
+    var cs = m.a.checks.length ? m.a.checks.map(function (c) { return [sevMeta[c.sev], c.text]; }) : [[['Ready', '#DDF0EC', '#0B5B52'], 'No outstanding checks arose. The draft is ready for human review.']];
+    return '<div class="card"><h2>Before sending</h2><div style="display:flex;flex-direction:column;gap:10px">' + cs.map(function (c) { return '<div class="check">' + chip(c[0][0], c[0][1], c[0][2]) + '<span style="word-break:break-word">' + esc(c[1]) + '</span></div>'; }).join('') + '</div></div>';
+  }
+
+  function viewBaseline(m) {
+    var b = m.a.baseItems;
+    if (!b.length) return '<div class="card"><h2>Baseline tracker</h2><p class="muted" style="max-width:680px;line-height:1.6">No previous briefing or action log is loaded. Upload one and set its role to Previous briefing to classify every open item as New, Updated, Still open, Closed or No update received. Without a baseline, the email makes no claims about change since last period.</p></div>';
+    return '<div class="card"><h2>Baseline tracker</h2><div class="scroll"><div role="table" aria-label="Baseline tracker" style="min-width:780px"><div role="row" class="grid head g4"><span role="columnheader">ID</span><span role="columnheader">Previously open item</span><span role="columnheader">Classification</span><span role="columnheader">Current evidence</span></div>' +
+      b.map(function (x) { var c = baseMeta[x.cls]; return '<div role="row" class="grid g4"><span role="cell" style="font-weight:700">' + esc(x.id) + '</span><span role="cell" style="word-break:break-word">' + esc(E.shorten(x.text, 200)) + '<br><span class="muted">' + esc(x.file + ' — ' + x.loc) + '</span></span><span role="cell">' + chip(x.cls, c[0], c[1]) + '</span><span role="cell" class="pre muted">' + esc(x.evidence) + '</span></div>'; }).join('') + '</div></div>' +
+      '<p class="muted small">New items from the current reports (no match in the baseline) are marked as New in the Review table.</p></div>';
+  }
+
+  function rightHtml(m) {
+    if (!S.files.length) return viewEmpty();
+    return viewMix(m) + viewTabs(m) + (S.tab === 'email' ? viewEmail(m) : S.tab === 'table' ? viewTable(m) : S.tab === 'checks' ? viewChecks(m) : viewBaseline(m));
+  }
+  function renderRight() {
+    var m = buildModel(); lastModel = m;
+    var k = document.getElementById('kpis'), r = document.getElementById('right');
+    if (k) k.innerHTML = viewKpis(m); if (r) r.innerHTML = rightHtml(m);
+  }
+  var rt = null;
+
+  function render() {
+    var ae = document.activeElement, fid = ae && ae.id, ss = null, se = null;
+    if (fid && ae.selectionStart !== undefined) { try { ss = ae.selectionStart; se = ae.selectionEnd; } catch (x) {} }
+    var scrollY = window.scrollY;
+    var m = buildModel(); lastModel = m;
+    var right = rightHtml(m);
+    app.innerHTML = viewHeader() + (S.notice ? '<div class="notice" role="status" aria-live="polite">' + esc(S.notice) + '</div>' : '') + '<div id="kpis">' + viewKpis(m) + '</div>' +
+      '<div class="main">' + viewLeft(m) + '<div class="right" id="right">' + right + '</div></div>' +
+      '<p class="muted small" style="max-width:900px;line-height:1.6">Extraction here is keyword and pattern based. Every claim must be confirmed against its source before sending. Reports are treated as source material, never as instructions.</p>';
+    if (fid && fid !== 'report-files') { var el = document.getElementById(fid); if (el) { el.focus(); if (ss !== null && el.setSelectionRange) { try { el.setSelectionRange(ss, se); } catch (x) {} } } }
+    window.scrollTo(0, scrollY);
+  }
+
+  /* ---------- actions ---------- */
+  function addFiles(list) {
+    var arr = Array.prototype.slice.call(list || []); if (!arr.length) return;
+    setState({ busy: true, notice: '' });
+    (async function () {
+      var out = [], skipped = 0;
+      for (var i = 0; i < arr.length; i++) {
+        var f = arr[i];
+        var dup = S.files.concat(out).some(function (x) { return x.name === f.name && x.size === f.size; });
+        if (dup) { skipped++; continue; }
+        out.push(await E.readFile(f));
+      }
+      var msg = out.length + ' file' + (out.length === 1 ? '' : 's') + ' added' + (skipped ? '; ' + skipped + ' duplicate' + (skipped === 1 ? '' : 's') + ' skipped' : '') + '.';
+      setState({ files: S.files.concat(out), busy: false, notice: msg });
+    })().catch(function (e) { setState({ busy: false, notice: 'Something went wrong while reading: ' + (e && e.message ? e.message : e) }); });
+  }
+
+  function copyText(text, onOk, ta) {
+    var fail = function () {
+      try { if (ta) { ta.focus(); ta.select(); if (document.execCommand('copy')) { onOk(); return; } } } catch (x) {}
+      setState({ notice: 'Copy was blocked here. Select the text and press Ctrl or Cmd + C.' });
+    };
+    try { navigator.clipboard.writeText(text).then(onOk).catch(fail); } catch (x) { fail(); }
+  }
+
+  app.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-act]'); if (!t) return;
+    var act = t.getAttribute('data-act'), v = t.getAttribute('data-v'), id = t.getAttribute('data-id');
+    if (act === 'tab') setState({ tab: v, copied: false });
+    else if (act === 'filter') setState({ filter: v });
+    else if (act === 'remove') { var f = S.files.filter(function (x) { return x.id === id; })[0]; setState({ files: S.files.filter(function (x) { return x.id !== id; }), notice: (f ? f.name : 'File') + ' removed.' }); }
+    else if (act === 'askReset') setState({ confirmReset: true });
+    else if (act === 'cancelReset') setState({ confirmReset: false });
+    else if (act === 'doReset') { memo = null; S = defaults(); S.notice = 'Dashboard reset. All files, settings and results were cleared.'; render(); }
+    else if (act === 'copyEmail') copyText(lastModel.em.text, function () { setState({ copied: true }); }, document.getElementById('emailbox'));
+    else if (act === 'copyMd') copyText(markdown(lastModel), function () { setState({ copiedMd: true }); }, null);
+    else if (act === 'download') {
+      var md = markdown(lastModel);
+      (async function () {
+        try { await dl.save({ filename: 'briefing-draft.md', data: new Blob([md], { type: 'text/markdown' }) }); setState({ notice: 'Briefing saved.' }); }
+        catch (x1) { try { await dl.save({ filename: 'briefing-draft.md', data: md }); setState({ notice: 'Briefing saved.' }); } catch (x2) { setState({ notice: 'Download was declined or is unavailable. Use Copy full briefing instead.' }); } }
+      })();
+    }
+  });
+  app.addEventListener('change', function (e) {
+    var t = e.target, k = t.getAttribute('data-change'); if (!k) return;
+    if (k === 'files') { var l = Array.prototype.slice.call(t.files || []); t.value = ''; addFiles(l); }
+    else if (k === 'role') { var id = t.getAttribute('data-id'), val = t.value; setState({ files: S.files.map(function (x) { return x.id === id ? Object.assign({}, x, { role: val }) : x; }) }); }
+    else if (k === 'audience') setState({ audience: t.value });
+  });
+  app.addEventListener('input', function (e) {
+    var k = e.target.getAttribute('data-input'); if (!k) return;
+    S[k] = e.target.value; clearTimeout(rt); rt = setTimeout(renderRight, 250);
+  });
+  app.addEventListener('dragover', function (e) { var d = e.target.closest('#drop'); if (!d) return; e.preventDefault(); d.classList.add('over'); });
+  app.addEventListener('dragleave', function (e) { var d = e.target.closest('#drop'); if (d) d.classList.remove('over'); });
+  app.addEventListener('drop', function (e) { var d = e.target.closest('#drop'); if (!d) return; e.preventDefault(); d.classList.remove('over'); addFiles(e.dataTransfer && e.dataTransfer.files); });
+  window.addEventListener('dragover', function (e) { e.preventDefault(); });
+  window.addEventListener('drop', function (e) { if (!e.target.closest || !e.target.closest('#drop')) e.preventDefault(); });
+
+  render();
+  try { if (window.claude && window.claude.use) { window.claude.use('downloads').then(function (d) { if (d) { dl = d; render(); } }).catch(function () {}); } } catch (x) {}
+})();
+</script>
+</body>
+</html>
